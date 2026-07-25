@@ -1,0 +1,11 @@
+[project]
+name = "frontend"
+version = "0.1.0"
+description = "Streamlit UI for Product CRUD"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "streamlit>=1.40",
+    "requests>=2.32",
+    "pandas>=2.2",
+]
