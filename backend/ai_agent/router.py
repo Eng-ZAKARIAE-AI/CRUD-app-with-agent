@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy.orm import Session
+from backend.crud_app.database import get_db
 
 from backend.ai_agent.agent import run_multimodal_chat
 from backend.ai_agent.schemas import AgentChatRequest, AgentChatResponse
@@ -16,13 +18,17 @@ router = APIRouter(prefix="/agent", tags=["AI Agent"])
     status_code=status.HTTP_200_OK,
     summary="Multimodal agent chat",
 )
-def agent_chat(payload: AgentChatRequest) -> AgentChatResponse:
+def agent_chat(
+    payload: AgentChatRequest,
+    db: Session = Depends(get_db)
+) -> AgentChatResponse:
     """Send a text (+ optional images) message to the multimodal agent."""
     try:
         reply = run_multimodal_chat(
             payload.message,
             images=payload.images,
             history=[item.model_dump() for item in payload.history],
+            db=db,
         )
     except RuntimeError as exc:
         # Missing API key / config
